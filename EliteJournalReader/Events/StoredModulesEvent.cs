@@ -32,6 +32,7 @@ namespace EliteJournalReader.Events
                 public string Name;
                 public string Name_Localised;
                 public string StarSystem;
+                public string StationName;
                 public long MarketID;
                 public int StorageSlot;
                 public int TransferCost;
@@ -44,7 +45,6 @@ namespace EliteJournalReader.Events
                 public bool InTransit;
                 public bool Hot;
             }
-
             public string StarSystem { get; set; }
             public string StationName { get; set; }
             public long MarketID { get; set; }

@@ -15,7 +15,7 @@ namespace EliteJournalReader.Events
 
         public class DockFighterEventArgs : JournalEventArgs
         {
-            public long ID { get; set; }
+            public int ID { get; set; }
         }
     }
 }

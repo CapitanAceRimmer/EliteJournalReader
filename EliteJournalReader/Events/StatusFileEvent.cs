@@ -26,8 +26,7 @@ namespace EliteJournalReader.Events
 
         public double Cargo { get; set; }
 
-        [JsonConverter(typeof(ExtendedStringEnumConverter<LegalState>))]
-        public LegalState LegalState { get; set; }
+        public string LegalState { get; set; }
 
         public double Latitude { get; set; }
 

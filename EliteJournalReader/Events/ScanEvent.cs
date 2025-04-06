@@ -217,9 +217,7 @@ namespace EliteJournalReader.Events
             public double? Periapsis { get; set; }
 
             public double? OrbitalInclination { get; set; }
-
             public double? AscendingNode { get; set; }
-
             public double? MeanAnomaly { get; set; }
 
             public double? Age_MY { get; set; }
@@ -263,9 +261,7 @@ namespace EliteJournalReader.Events
             public AtmosphereClass AtmosphereType { get; set; }
 
             public ScanItemComponent[] AtmosphereComposition { get; set; }
-
             public Dictionary<string, double> Composition { get; set; }
-
             public string Volcanism { get; set; }
 
             public double? SurfaceGravity { get; set; }
@@ -281,7 +277,6 @@ namespace EliteJournalReader.Events
             public ScanItemComponent[] Materials { get; set; }
 
             public bool? WasDiscovered { get; set; }
-
             public bool? WasMapped { get; set; }
         }
     }
@@ -338,13 +333,14 @@ namespace EliteJournalReader.Events
             return bps.ToArray();
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            if (!(value is BodyParent[] bps))
-                return;
-
-            var bpsArray = bps.Select(bp => new Dictionary<string, long> { [bp.Type] = bp.BodyID }).ToArray();
-            serializer.Serialize(writer, bpsArray);
-        }
+        //public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        //{
+        //    if (!(value is BodyParent[] bps))
+        //        return;
+        //
+        //    var bpsArray = bps.Select(bp => new Dictionary<string, long> { [bp.Type] = bp.BodyID }).ToArray();
+        //    serializer.Serialize(writer, bpsArray);
+        //}
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) => throw new NotImplementedException();
     }
 }

@@ -36,14 +36,13 @@ namespace EliteJournalReader
 
         public StatusFileEvent LastEvent { get; protected set; }
 
-        private readonly bool logUpdates = false;
+        private readonly bool logUpdates = true;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:System.Object" /> class.
         /// </summary>
-        public StatusWatcher(string path, bool logUpdates)
+        public StatusWatcher(string path)
         {
-            this.logUpdates = logUpdates;
             Initialize(path);
         }
 
@@ -143,7 +142,16 @@ namespace EliteJournalReader
                 using (var jsonTextReader = new JsonTextReader(streamReader))
                 {
                     var jToken = JToken.ReadFrom(jsonTextReader);
-                    var evt = jToken.ToObject<StatusFileEvent>() ?? throw new ArgumentNullException($"Unexpected empty status.json file");
+                    var evt = jToken.ToObject<StatusFileEvent>();
+                    if (evt == null)
+                        throw new ArgumentNullException($"Unexpected empty status.json file");
+                    
+                    if (logUpdates)
+                    {
+                        Trace.TraceInformation("Status: " + jToken.ToString(Formatting.None));
+                        Trace.TraceInformation($"Status Flags : {(long)evt.Flags:X8} - {string.Join(", ", evt.Flags.GetIndividualFlags())}");
+                        Trace.TraceInformation($"Status Flags2: {(long)evt.Flags2:X8} - {string.Join(", ", evt.Flags2.GetIndividualFlags())}");
+                    }
 
                     // only fire the event if it's new data
                     if (evt.Timestamp > lastTimestamp)
@@ -151,13 +159,6 @@ namespace EliteJournalReader
                         lastTimestamp = evt.Timestamp;
                         LastEvent = evt;
                         FireStatusUpdatedEvent(evt);
-
-                        if (logUpdates)
-                        {
-                            Trace.TraceInformation("Status: " + jToken.ToString(Formatting.None));
-                            Trace.TraceInformation($"Status Flags : {(long)evt.Flags:X8} - {string.Join(", ", evt.Flags.GetIndividualFlags())}");
-                            Trace.TraceInformation($"Status Flags2: {(long)evt.Flags2:X8} - {string.Join(", ", evt.Flags2.GetIndividualFlags())}");
-                        }
                     }
                 }
             }
@@ -171,7 +172,6 @@ namespace EliteJournalReader
             catch (Exception)
             {
 #endif
-                FireFailedStatusUpdateEvent();
             }
         }
 
@@ -185,25 +185,11 @@ namespace EliteJournalReader
             {
                 Trace.TraceWarning($"{ex.GetType().Name} while reading from status.json: {ex.Message}");
                 Trace.TraceInformation(ex.StackTrace);
-                FireFailedStatusUpdateEvent();
             }
         }
 
 
         protected void FireStatusUpdatedEvent(StatusFileEvent evt) => StatusUpdated?.Invoke(this, evt);
-
-        /// <summary>
-        /// When an error occurs, set some status flags to signal that the status is not valid
-        /// And to prevent logic from sending data to EDSM/Inara.
-        /// </summary>
-        protected void FireFailedStatusUpdateEvent()
-        {
-            FireStatusUpdatedEvent(new StatusFileEvent
-            {
-                Flags = StatusFlags.None,
-                Flags2 = MoreStatusFlags.InMulticrew & MoreStatusFlags.PhysicalMulticrew & MoreStatusFlags.TelepresenceMulticrew,
-            });
-        }
     }
 
 }

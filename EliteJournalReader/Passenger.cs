@@ -2,7 +2,7 @@
 {
     public struct Passenger
     {
-        public long MissionID;
+        public int MissionID;
         public string Type;
         public string VIP;
         public bool Wanted;

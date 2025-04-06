@@ -9,8 +9,8 @@ namespace EliteJournalReader.Events
 {
     //When Written: when changing the task assignment of a member of crew
     //Parameters:
-    //ï¿½	Name
-    //ï¿½	Role
+    //•	Name
+    //•	Role
     public class CrewAssignEvent : JournalEvent<CrewAssignEvent.CrewAssignEventArgs>
     {
         public CrewAssignEvent() : base("CrewAssign") { }
@@ -18,7 +18,7 @@ namespace EliteJournalReader.Events
         public class CrewAssignEventArgs : JournalEventArgs
         {
             public string Name { get; set; }
-            public long CrewID { get; set; }
+            public int CrewID { get; set; }
             public string Role { get; set; }
         }
     }

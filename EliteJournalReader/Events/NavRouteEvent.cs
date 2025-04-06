@@ -28,28 +28,34 @@ namespace EliteJournalReader.Events
 
         public class NavRouteEventArgs : JournalEventArgs
         {
+            public string StarSystem { get; set; }
             public RouteElement[] Route { get; set; }
+            public long SystemAddress { get; set; }
 
-            public override void PostProcess(JObject evt, JournalWatcher journalWatcher)
-            {
-                // The actual route is written to NavRoute.json, so let's try to read it
-                try
-                {
-                    string path = Path.Combine(journalWatcher.Path, "NavRoute.json");
-                    if (File.Exists(path))
-                    {
-                        string text = File.ReadAllText(path);
-                        var navRoute = JObject.Parse(text).ToObject<NavRouteEventArgs>();
-                        Route = navRoute.Route;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceWarning("Error reading NavRoute.json: " + e.Message);
-                    throw e;
-                }
+            [JsonConverter(typeof(SystemPositionConverter))]
+            public SystemPosition StarPos { get; set; }
 
-            }
+            public string StarClass { get; set; }
+
+            //public override void PostProcess(JObject evt, JournalWatcher journalWatcher)
+            //{
+            //    // The actual route is written to NavRoute.json, so let's try to read it
+            //    try
+            //    {
+            //        string path = Path.Combine(journalWatcher.Path, "NavRoute.json");
+            //        if (File.Exists(path))
+            //        {
+            //            string text = File.ReadAllText(path);
+            //            var navRoute = JObject.Parse(text).ToObject<NavRouteEventArgs>();
+            //            Route = navRoute.Route;
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Trace.TraceWarning("Error reading NavRoute.json: " + e.Message);
+            //        throw e;
+            //    }
+            //}
         }
     }
 }

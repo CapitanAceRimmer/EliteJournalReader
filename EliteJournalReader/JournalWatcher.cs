@@ -167,8 +167,9 @@ namespace EliteJournalReader
             // to be used for unit tests when we're not actually checking file systems
         }
 
-        private readonly Regex journalFileRegex = new Regex(@"^(?<path>.*)\\Journal(Beta)?\.(?<timestamp>[0-9T-]+)\.(?<part>\d+)\.log$", RegexOptions.Compiled);
-
+        //private readonly Regex journalFileRegex = new Regex(@"^(?<path>.*)\\Journal(Beta)?\.(?<timestamp>\d+)\.(?<part>\d+)\.log$", RegexOptions.Compiled);
+        private readonly Regex journalFileRegex = new Regex(@"^(?<path>.*)\\Journal(Beta)?\.(?<timestamp>[0-9T-]+)\.(?<part>\d+)\.log$", RegexOptions.Compiled); // ? 
+        
         /// <summary>
         /// This will look into the journal folder and check the latest journal.
         /// It will then fire events from all previous events in the current play session to facilitate
@@ -373,7 +374,7 @@ namespace EliteJournalReader
             journalThreadId++;
 
             if (journalCancellationTokenSource != null)
-                journalCancellationTokenSource.Cancel();
+              journalCancellationTokenSource.Cancel();
 
             if (journalThread != null && journalThread.IsAlive)
             {
@@ -398,8 +399,10 @@ namespace EliteJournalReader
             journalThread = new Thread(state =>
             {
                 // keep a current ID for this thread. If the ID changes, we are watching a different file, and this thread can exit.
-                (int id, long offset, var journalFileName, var cancellationToken) = (ValueTuple<int, long, string, CancellationToken>)state;
-                string journalFile = System.IO.Path.Combine(Path, journalFileName);
+                var tuple = (Tuple<int, long, string, CancellationToken>)state;
+                int id = tuple.Item1;
+                long offset = tuple.Item2;
+                string journalFile = System.IO.Path.Combine(Path, tuple.Item3);
 
 #if DEBUG
                 Trace.TraceInformation($"Journal: now starting journal thread {id} for {journalFile} from offset {offset}.");
@@ -409,7 +412,7 @@ namespace EliteJournalReader
                 {
                     using (var reader = new StreamReader(new FileStream(journalFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                     {
-                        while (id == journalThreadId && !cancellationToken.IsCancellationRequested)
+                        while (id == journalThreadId)
                         {
                             // check for updates every 0.5 seconds
                             // if we are no longer watching (this thread), stop.
@@ -436,8 +439,6 @@ namespace EliteJournalReader
                     LatestJournalFile = null;
                 }
 
-                cancellationToken.ThrowIfCancellationRequested();
-
                 if (id == journalThreadId)
                 {
                     // We're here, so something must've gone wrong
@@ -456,7 +457,7 @@ namespace EliteJournalReader
                 Name = "Journal Watcher",
                 IsBackground = true
             };
-            journalThread.Start((journalThreadId, startOffset, filename, journalCancellationTokenSource.Token));
+            journalThread.Start(Tuple.Create(journalThreadId, startOffset, filename, journalCancellationTokenSource.Token));
 
         }
 

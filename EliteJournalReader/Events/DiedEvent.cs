@@ -32,8 +32,9 @@ namespace EliteJournalReader.Events
             public string KillerShip { get; set; }
             public string KillerRank { get; set; }
 
-            public override void PostProcess(JObject evt, JournalWatcher journalWatcher)
+            public override void PostProcess(JObject evt)
             {
+                //string killerName = evt.Value<string>("KillerName");
                 if (!string.IsNullOrEmpty(KillerName))
                 {
                     // it was an individual
@@ -41,6 +42,9 @@ namespace EliteJournalReader.Events
                     {
                         new Killer
                         {
+                            //Name = killerName,
+                            //Ship = evt.Value<string>("KillerShip"),
+                            //Rank = evt.Value<string>("KillerRank")
                             Name = KillerName,
                             Ship = KillerShip,
                             Rank = KillerRank,

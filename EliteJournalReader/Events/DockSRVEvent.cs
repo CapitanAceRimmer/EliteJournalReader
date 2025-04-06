@@ -17,7 +17,7 @@ namespace EliteJournalReader.Events
         {
             public string SRVType { get; set; }
             public string SRVType_Localised { get; set; }
-            public long ID { get; set; }
+            public int ID { get; set; }
         }
     }
 }

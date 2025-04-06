@@ -11,6 +11,7 @@ namespace EliteJournalReader
         public string Name { get; set; }
         public string FactionState { get; set; }
         public string Government { get; set; }
+        public string Government_Localised { get; set; }
         public double Influence { get; set; }
         public string Allegiance { get; set; }
         public string Happiness { get; set; }

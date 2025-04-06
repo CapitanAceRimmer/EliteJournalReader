@@ -9,9 +9,9 @@ namespace EliteJournalReader.Events
 {
     //When Written:
     //Parameters:
-    //ï¿½	Type: cargo type
-    //ï¿½	Count: number of units
-    //ï¿½	Abandoned: whether ï¿½abandonedï¿½
+    //•	Type: cargo type
+    //•	Count: number of units
+    //•	Abandoned: whether ‘abandoned’
     public class EjectCargoEvent : JournalEvent<EjectCargoEvent.EjectCargoEventArgs>
     {
         public EjectCargoEvent() : base("EjectCargo") { }
@@ -23,7 +23,7 @@ namespace EliteJournalReader.Events
             public int Count { get; set; }
             public bool Abandoned { get; set; }
             public string PowerplayOrigin { get; set; }
-            public long MissionID { get; set; }
+            public int MissionID { get; set; }
         }
     }
 }

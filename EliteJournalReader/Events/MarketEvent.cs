@@ -42,11 +42,11 @@ namespace EliteJournalReader.Events
             public string StationType { get; set; }
             public MarketInfo MarketInfo { get; set; }
 
-            public override void PostProcess(JObject evt, JournalWatcher journalWatcher)
-            {
-                // read market info from market.json
-                MarketInfo = ReadMarketInfo(journalWatcher.Path);
-            }
+            //public override void PostProcess(JObject evt, JournalWatcher journalWatcher)
+            //{
+            //    // read market info from market.json
+            //    MarketInfo = ReadMarketInfo(journalWatcher.Path);
+            //}
 
             public MarketInfo ReadMarketInfo(string journalPath)
             {

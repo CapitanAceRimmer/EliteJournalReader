@@ -22,10 +22,10 @@ namespace EliteJournalReader.Events
 
         public class FSDTargetEventArgs : JournalEventArgs
         {
-            public string Name { get; set; }
-            public long SystemAddress { get; set; }
-            public int RemainingJumpsInRoute { get; set; }
             public string StarClass { get; set; }
+            public long SystemAddress { get; set; }
+            public string Name { get; set; }
+            public int RemainingJumpsInRoute { get; set; }
         }
     }
 }

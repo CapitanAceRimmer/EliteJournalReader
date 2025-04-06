@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -28,7 +27,7 @@ namespace EliteJournalReader.Events
             public string NearestDestination { get; set; }
             public string NearestDestination_Localised { get; set; }
             public bool PlayerControlled { get; set; }
-            public bool Taxi { get; set;}
+            public bool Taxi { get; set; }
             public bool Multicrew { get; set; }
             public bool OnStation { get; set; }
             public bool OnPlanet { get; set; }

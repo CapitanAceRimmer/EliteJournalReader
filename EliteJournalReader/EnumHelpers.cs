@@ -13,104 +13,7 @@ namespace EliteJournalReader
     public static class EnumHelpers
     {
         private static readonly Dictionary<Type, Dictionary<string, object>> enumDescriptionCache = new Dictionary<Type, Dictionary<string, object>>();
-        private static readonly Dictionary<Type, Dictionary<object, string>> enumToDescriptionCache = new Dictionary<Type, Dictionary<object, string>>();
 
-        public static T ToEnum<T>(this string value, T defaultValue) where T : struct
-        {
-            if (value == null)
-                return defaultValue;
-
-            var type = typeof(T);
-            if (!enumDescriptionCache.TryGetValue(type, out var cache))
-            {
-                cache = new Dictionary<string, object>();
-                var attrs = type.GetFields().SelectMany(f => f.GetCustomAttributes<DescriptionAttribute>().Select(d => new { field = f, desc = d }));
-                foreach(var attr in attrs)
-                {
-                    cache[attr.desc.Description] = attr.field.GetValue(null);
-                }
-                enumDescriptionCache[type] = cache;
-            }
-
-            // check if it's in the cache
-            if (cache.TryGetValue(value, out object resultFromCache) && resultFromCache is T resultTyped)
-            {
-                return resultTyped;
-            }
-
-            // so it's not in the cache, maybe we can parse it the usual way?
-            if (Enum.TryParse(value, true, out T resultDirect))
-            {
-                cache[value] = resultDirect; // store for next time!
-                return resultDirect;
-            }
-
-            // if this all fails, try it again, but now case insensitive
-            var descs = enumDescriptionCache[type];
-            FieldInfo fieldInfo = null;
-            if (descs == null)
-            {
-                fieldInfo = typeof(T)
-                    .GetFields()
-                    .FirstOrDefault(f => f.GetCustomAttributes<DescriptionAttribute>()
-                                 .Any(a => a.Description.Equals(value, StringComparison.OrdinalIgnoreCase))
-                    );
-
-            }
-            else
-            {
-                foreach (var kv in descs)
-                {
-                    if (kv.Key.Equals(value, StringComparison.OrdinalIgnoreCase))
-                    {
-                        cache[value] = kv.Value; // store for next time!
-                        return (T)kv.Value;
-                    }
-                }
-            }
-
-            // not in the descriptions, perhaps in the 'regular' values?
-            if (fieldInfo == null)
-                fieldInfo = typeof(T)
-                    .GetFields()
-                    .FirstOrDefault(f => f.Name.Equals(value, StringComparison.OrdinalIgnoreCase));
-
-            if (fieldInfo != null)
-            {
-                var resultInsensitive = (T)fieldInfo.GetValue(null);
-                cache[value] = resultInsensitive; // remember for next time
-                return resultInsensitive;
-            }
-
-            // we've tried everything, return the default value, but remember this for next time
-            cache[value] = defaultValue;
-            return defaultValue;
-        }
-
-        public static string StringValue(this Enum enumItem)
-        {
-            if (enumToDescriptionCache.TryGetValue(enumItem.GetType(), out var cache))
-            {
-                if (cache.TryGetValue(enumItem, out string resultFromCache))
-                {
-                    return resultFromCache;
-                }
-            }
-            if (cache == null)
-            {
-                cache = new Dictionary<object, string>();
-                enumToDescriptionCache[enumItem.GetType()] = cache;
-            }
-            string value = enumItem
-                .GetType()
-                .GetField(enumItem.ToString())
-                .GetCustomAttributes<DescriptionAttribute>()
-                .Select(a => a.Description)
-                .FirstOrDefault() ?? enumItem.ToString();
-
-            cache[enumItem] = value;
-            return value;
-        }
 
         public static IEnumerable<Enum> GetFlags(this Enum value)
         {
@@ -160,6 +63,67 @@ namespace EliteJournalReader
                     yield return value;
             }
         }
+        public static T ToEnum<T>(this string value, T defaultValue) where T : struct
+        {
+            if (value == null)
+                return defaultValue;
+
+            var type = typeof(T);
+            if (!enumDescriptionCache.TryGetValue(type, out var cache))
+            {
+                cache = new Dictionary<string, object>();
+                var attrs = type.GetFields().SelectMany(f => f.GetCustomAttributes<DescriptionAttribute>().Select(d => new { field = f, desc = d }));
+                foreach(var attr in attrs)
+                {
+                    cache[attr.desc.Description] = attr.field.GetValue(null);
+                }
+                enumDescriptionCache[type] = cache;
+            }
+
+            // check if it's in the cache
+            if (cache.TryGetValue(value, out object resultFromCache) && resultFromCache is T resultTyped)
+            {
+                return resultTyped;
+            }
+
+            // so it's not in the cache, maybe we can parse it the usual way?
+            if (Enum.TryParse(value, true, out T resultDirect))
+            {
+                cache[value] = resultDirect; // store for next time!
+                return resultDirect;
+            }
+
+            // if this all fails, try it again, but now case insensitive
+            var e = typeof(T)
+                .GetFields()
+                .FirstOrDefault(f => f.GetCustomAttributes<DescriptionAttribute>()
+                             .Any(a => a.Description.Equals(value, StringComparison.OrdinalIgnoreCase))
+                );
+
+            // not in the descriptions, perhaps in the 'regular' values?
+            if (e == null)
+                e = typeof(T)
+                    .GetFields()
+                    .FirstOrDefault(f => f.Name.Equals(value, StringComparison.OrdinalIgnoreCase));
+
+            if (e != null)
+            {
+                var resultInsensitive = (T)e.GetValue(null);
+                cache[value] = resultInsensitive; // remember for next time
+                return resultInsensitive;
+            }
+
+            // we've tried everything, return the default value, but remember this for next time
+            cache[value] = defaultValue;
+            return defaultValue;
+        }
+
+        public static string StringValue(this Enum enumItem) => enumItem
+            .GetType()
+            .GetField(enumItem.ToString())
+            .GetCustomAttributes<DescriptionAttribute>()
+            .Select(a => a.Description)
+            .FirstOrDefault() ?? enumItem.ToString();
     }
 
 

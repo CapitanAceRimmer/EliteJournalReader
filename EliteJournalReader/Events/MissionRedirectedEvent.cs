@@ -9,12 +9,12 @@ namespace EliteJournalReader.Events
 {
     //When written: when a mission is updated with a new destination
     //Parameters
-    //ï¿½	MissionID
-    //ï¿½	MissionName
-    //ï¿½	NewDestinationStation
-    //ï¿½	OldDestinationStation
-    //ï¿½	NewDestinationSystem
-    //ï¿½	OldDestinationSystem
+    //•	MissionID
+    //•	MissionName
+    //•	NewDestinationStation
+    //•	OldDestinationStation
+    //•	NewDestinationSystem
+    //•	OldDestinationSystem
 
     public class MissionRedirectedEvent : JournalEvent<MissionRedirectedEvent.MissionRedirectedEventArgs>
     {
@@ -22,7 +22,8 @@ namespace EliteJournalReader.Events
 
         public class MissionRedirectedEventArgs : JournalEventArgs
         {
-            public long MissionID { get; set; }
+            public int MissionID { get; set; }
+            public string MissionName { get; set; }
             public string Name { get; set; }
             public string LocalisedName { get; set; }
             public string NewDestinationStation { get; set; }

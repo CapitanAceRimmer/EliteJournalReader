@@ -9,7 +9,7 @@ namespace EliteJournalReader.Events
 {
     //When written: if the journal file grows to 500k lines, we write this event, close the file, and start a new one
     //Parameters:
-    //•	Message: next part number
+    //ï¿½	Message: next part number
     public class ContinuedEvent : JournalEvent<ContinuedEvent.ContinuedEventArgs>
     {
         public ContinuedEvent() : base("Continued")
@@ -17,16 +17,19 @@ namespace EliteJournalReader.Events
 
         }
 
-        internal override JournalEventArgs FireEvent(JournalWatcher journalWatcher, JObject evt)
-        {
-            var args = base.FireEvent(journalWatcher, evt);
+        //TODO: Change the JournalWatcher to capture the even and react to it
+        //public override JournalEventArgs FireEvent(object sender, JObject evt)
+        //{
+        //    var args = base.FireEvent(sender, evt);
 
-            // a continued event signals that a new file is coming, so
-            // let's start polling for it
-            journalWatcher?.StartPollingForNewJournal();
+        //    // a continued event signals that a new file is coming, so
+        //    // let's start polling for it
+        //    // This object should NOT know about JournalWatchers
+        //    //var watcher = sender as JournalWatcher;
+        //    //watcher?.StartPollingForNewJournal();
 
-            return args;
-        }
+        //    return args;
+        //}
 
         public class ContinuedEventArgs : JournalEventArgs
         {

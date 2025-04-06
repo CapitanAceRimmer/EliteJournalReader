@@ -8,8 +8,8 @@ in a .NET environment.
 
 # Usage
 
-Instantiate a JournalWatcher object. Call `StartWatching()` to start
-monitoring the Elite Dangerous Save Games folder (where the journal files are created)
+Instantiate a JournalWatcher object. Call `StartWatching(Datetime startTime)` to start
+monitoring the Elite Dangerous Save Games folder (where the journal files are created) from the given local date time
 and register for events by calling:
 
 	JournalWatcher.GetEvent<TEventType>().Fired += MyEventHandler;
@@ -21,9 +21,10 @@ When you're done, call `StopWatching()` to stop monitoring file changes.
 
 # More information
 The full documentation on all generated events can be found at:
-http://hosting.zaonce.net/community/journal/v18/Journal_Manual_v18.pdf
+http://hosting.zaonce.net/community/journal/v32/Journal_Manual_v32.pdf
 (or the same as a 
-[Word document](http://hosting.zaonce.net/community/journal/v18/Journal_Manual_v18.doc))
+[Word document](http://hosting.zaonce.net/community/journal/v32/Journal_Manual_v32.doc))
+Also [see](https://elite-journal.readthedocs.io/en/latest/) for an online version of the latest journal
 
 # Disclaimer
 This site was created using assets and imagery from Elite: Dangerous, 

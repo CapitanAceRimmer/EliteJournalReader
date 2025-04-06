@@ -9,10 +9,10 @@ namespace EliteJournalReader.Events
 {
     //When written: when putting multiple modules into storage
     //Parameters:
-    //ï¿½	MarketID
-    //ï¿½	Ship
-    //ï¿½	ShipId
-    //ï¿½	Items: Array of records
+    //•	MarketID
+    //•	Ship
+    //•	ShipId
+    //•	Items: Array of records
     //o   Slot
     //o   Name
     //o   EngineerModifications(only present if modified)
@@ -33,7 +33,7 @@ namespace EliteJournalReader.Events
             }
 
             public string Ship { get; set; }
-            public long ShipID { get; set; }
+            public int ShipId { get; set; }
             public ModuleItems[] Items { get; set; }
         }
     }
