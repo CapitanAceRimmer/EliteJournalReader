@@ -49,14 +49,14 @@ namespace EliteJournalReader
             return eventArgs;
         }
 
-        public override JournalEventArgs GetEvent(JObject evt)
+        public override JournalEventArgs GetEvent(JObject eventJObj)
         {
-            var eventArgs = evt.ToObject<TJournalEventArgs>();
-            eventArgs.OriginalEvent = evt;
-            eventArgs.Timestamp = DateTime.Parse(evt.Value<string>("timestamp"),
+            var eventArgs = eventJObj.ToObject<TJournalEventArgs>();
+            eventArgs.OriginalEvent = eventJObj;
+            eventArgs.Timestamp = DateTime.Parse(eventJObj.Value<string>("timestamp"),
                 CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
 
-            eventArgs.PostProcess(evt);
+            eventArgs.PostProcess(eventJObj);
 
            
             return eventArgs;

@@ -578,8 +578,8 @@ namespace EliteJournalReader
                     Trace.TraceInformation($"Journal - firing event {eventType} @ {evt["timestamp"]?.Value<string>()}\r\n\t{line}");
 #endif
                 var journalEventArgs = FireEvent(eventType, evt);
-                if (journalEventArgs != null)
-                    MessageReceived?.Invoke(this, new MessageReceivedEventArgs(journalEventArgs, eventType));
+                //if (journalEventArgs != null)
+                //    MessageReceived?.Invoke(this, new MessageReceivedEventArgs(journalEventArgs, eventType));
             }
             catch (Exception e)
             {
