@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -260,6 +261,7 @@ namespace EliteJournalReader.Events
             [JsonConverter(typeof(ExtendedStringEnumConverter<AtmosphereClass>))]
             public AtmosphereClass AtmosphereType { get; set; }
 
+            [JsonConverter(typeof(ScanItemComponentConverter))]
             public ScanItemComponent[] AtmosphereComposition { get; set; }
             public Dictionary<string, double> Composition { get; set; }
             public string Volcanism { get; set; }
@@ -274,6 +276,7 @@ namespace EliteJournalReader.Events
 
             public bool? TidalLock { get; set; }
 
+            [JsonConverter(typeof(ScanItemComponentConverter))]
             public ScanItemComponent[] Materials { get; set; }
 
             public bool? WasDiscovered { get; set; }
@@ -311,24 +314,32 @@ namespace EliteJournalReader.Events
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var bps = new List<BodyParent>();
-            if (JToken.ReadFrom(reader) is JArray array)
+            //var reaf = JToken.ReadFrom(reader);
+            try
             {
-                foreach (var token in array.Children())
+                if (JToken.ReadFrom(reader) is JArray array)
                 {
-                    if (token is JObject obj)
+                    foreach (var token in array.Children())
                     {
-                        var prop = obj.Properties().FirstOrDefault();
-                        if (prop != null)
+                        if (token is JObject obj)
                         {
-                            var bp = new BodyParent
+                            var prop = obj.Properties().FirstOrDefault();
+                            if (prop != null)
                             {
-                                Type = prop.Name,
-                                BodyID = prop.Value.Value<int>()
-                            };
-                            bps.Add(bp);
+                                var bp = new BodyParent
+                                {
+                                    Type = prop.Name,
+                                    BodyID = prop.Value.Value<int>()
+                                };
+                                bps.Add(bp);
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine("TODO: FIX THIS - Exception captured in " + nameof(BodyParentConverter) + " of " + e.ToString());
             }
             return bps.ToArray();
         }
@@ -343,4 +354,64 @@ namespace EliteJournalReader.Events
         //}
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) => throw new NotImplementedException();
     }
+
+    public class ScanItemComponentConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType) => objectType == typeof(IEnumerable<BodyParent>);
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var sics = new List<ScanItemComponent>();
+            try
+            {
+
+                var jObj = JToken.ReadFrom(reader);
+                if (jObj is JArray array)
+                {
+                    foreach (var token in array.Children())
+                    {
+                        if (token is JObject obj)
+                        {
+                            var prop = obj.Properties().FirstOrDefault();
+                            if (prop != null)
+                            {
+                                var sic = new ScanItemComponent
+                                {
+                                    Name = prop.Name,
+                                    Percent = prop.Value.Value<double>()
+                                };
+                                sics.Add(sic);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var token in jObj)
+                    {
+                        if (token is JProperty prop)
+                        {
+                            if (prop != null)
+                            {
+                                var sic = new ScanItemComponent
+                                {
+                                    Name = prop.Name,
+                                    Percent = prop.Value.Value<double>()
+                                };
+                                sics.Add(sic);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine("TODO: FIX THIS - Exception captured in " + nameof(ScanItemComponentConverter) + " of " + e.ToString());
+            }
+            return sics.ToArray();
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) => throw new NotImplementedException();
+    }
+
 }

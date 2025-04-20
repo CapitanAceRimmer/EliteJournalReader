@@ -63,6 +63,38 @@ namespace EliteJournalReader.Tests
             Assert.AreEqual("Cmdr Yellowboze", args.Killers[1].Name);
         }
 
+
+        [TestMethod]
+        public void Test_Old_Style_ScanEvent()
+        {
+            //{ "timestamp":"2016-12-14T21:55:24Z", "event":"Died", "Killers":[ { "Name":"Cmdr Ekol Tieja", "Ship":"federation_gunship", "Rank":"Elite" }, { "Name":"Cmdr Yellowboze", "Ship":"federation_gunship", "Rank":"Novice" } ] }
+            ScanEvent.ScanEventArgs args = null;
+            watcher.GetEvent<ScanEvent>().Fired += (s, e) => args = e;
+            string scanEvent = "{ \"timestamp\":\"2016-10-28T16:37:01Z\", \"event\":\"Scan\", \"BodyName\":\"Synuefe HD-J c25-3 1\", \"DistanceFromArrivalLS\":24.219051, \"TidalLock\":true, \"TerraformState\":\"\", \"PlanetClass\":\"High metal content body\", \"Atmosphere\":\"\", \"Volcanism\":\"\", \"MassEM\":0.046179, \"Radius\":2322928.750000, \"SurfaceGravity\":3.410974, \"SurfaceTemperature\":790.957092, \"SurfacePressure\":0.000000, \"Landable\":true, \"Materials\":{ \"iron\":22.0, \"nickel\":16.6, \"sulphur\":15.6, \"carbon\":13.1, \"chromium\":9.9, \"phosphorus\":8.4, \"zinc\":6.0, \"germanium\":4.6, \"cadmium\":1.7, \"niobium\":1.5, \"polonium\":0.6 }, \"SemiMajorAxis\":7260646400.000000, \"Eccentricity\":0.000006, \"OrbitalInclination\":0.000063, \"Periapsis\":182.233215, \"OrbitalPeriod\":415573.281250, \"RotationPeriod\":417737.500000 }";
+            watcher.FireFakeEvent(scanEvent);
+
+            Assert.IsNotNull(args);
+            //Assert.AreEqual(2, args.Killers.Length);
+            //Assert.AreEqual("Cmdr Ekol Tieja", args.Killers[0].Name);
+            //Assert.AreEqual("Cmdr Yellowboze", args.Killers[1].Name);
+        }
+
+
+        [TestMethod]
+        public void Test_EngineerApplyEvent()
+        {
+            //{ "timestamp":"2016-12-14T21:55:24Z", "event":"Died", "Killers":[ { "Name":"Cmdr Ekol Tieja", "Ship":"federation_gunship", "Rank":"Elite" }, { "Name":"Cmdr Yellowboze", "Ship":"federation_gunship", "Rank":"Novice" } ] }
+            EngineerApplyEvent.EngineerApplyEventArgs args = null;
+            watcher.GetEvent<EngineerApplyEvent>().Fired += (s, e) => args = e;
+            string @event = "{ \"timestamp\":\"2018-02-25T18:00:02Z\", \"event\":\"EngineerApply\", \"Engineer\":\"Ram Tah\", \"Blueprint\":\"ChaffLauncher_ChaffCapacity\", \"Level\":3 }";
+            watcher.FireFakeEvent(@event);
+
+            Assert.IsNotNull(args);
+            //Assert.AreEqual(2, args.Killers.Length);
+            //Assert.AreEqual("Cmdr Ekol Tieja", args.Killers[0].Name);
+            //Assert.AreEqual("Cmdr Yellowboze", args.Killers[1].Name);
+        }
+
         [TestMethod]
         public void Test_NavRoute()
         {
