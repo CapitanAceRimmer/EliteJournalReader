@@ -364,7 +364,6 @@ namespace EliteJournalReader.Events
             var sics = new List<ScanItemComponent>();
             try
             {
-
                 var jObj = JToken.ReadFrom(reader);
                 if (jObj is JArray array)
                 {
@@ -372,13 +371,29 @@ namespace EliteJournalReader.Events
                     {
                         if (token is JObject obj)
                         {
-                            var prop = obj.Properties().FirstOrDefault();
-                            if (prop != null)
+                            if (obj.Count == 1) // Json Form is  "iron":22.0,
                             {
+                                var prop = obj.Properties().FirstOrDefault();
+                                if (prop != null)
+                                {
+                                    var sic = new ScanItemComponent
+                                    {
+                                        Name = prop.Name,
+                                        Percent = prop.Value.Value<double>(),
+                                    };
+                                    sics.Add(sic);
+                                }
+                            }
+                            else
+                            {   // Json Form is  { "Name":"iron", "Percent":22.0 }
+                                Debug.Assert(obj.Count == 2, $"Token count was {token.Count()} not 2"); 
+                                var props = obj.Properties().ToList();
+                                var name = props[0].Value.Value<string>();
+                                var value = props[1].Value.Value<double>();
                                 var sic = new ScanItemComponent
                                 {
-                                    Name = prop.Name,
-                                    Percent = prop.Value.Value<double>()
+                                    Name = name,
+                                    Percent = value,
                                 };
                                 sics.Add(sic);
                             }
